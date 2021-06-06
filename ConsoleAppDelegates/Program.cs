@@ -22,6 +22,31 @@ namespace ConsoleAppDelegates
         }
         public delegate bool IsPromoteEmp(Employee emply);  //Delegate
 
+        //Implementing multicast delegates
+        public static void SampleMethod1()
+        {
+            Console.WriteLine("Sample Method1 is invoked.");
+        }
+        public static void SampleMethod2()
+        {
+            Console.WriteLine("Sample Method2 is invoked.");
+        }
+        public static void SampleMethod3()
+        {
+            Console.WriteLine("Sample Method3 is invoked.");
+        }
+        public delegate void SampleDelegate();  //Delegate
+
+        //Multi cast delegate to demostrate delegate return only the last added invoked delegate
+        public static int Add(int fn,int sn)
+        {
+            return fn + sn;
+        }
+        public static int Multiply(int fn,int sn)
+        {
+            return fn * sn;
+        }
+        public delegate int DelCalculate(int fn, int sn);   //Delegate
         static void Main(string[] args)
         {
             HelloMethodDelegate del = new HelloMethodDelegate(HelloMethod);
@@ -47,6 +72,44 @@ namespace ConsoleAppDelegates
             Employee.PromoteEmployeeWithDelegate(employee, empDel);
             Console.WriteLine();
             Employee.PromoteEmployeeWithDelegate(employee, emp => emp.Salary >= 2000);  //can also do using lambda
+
+            //Impementing multi cast delegate
+            Console.WriteLine();
+            Console.WriteLine("Multi cast Delegates.");
+            SampleDelegate sd1, sd2, sd3,sd4;
+            sd1 = new SampleDelegate(SampleMethod1);
+            sd2 = new SampleDelegate(SampleMethod2);
+            sd3 = new SampleDelegate(SampleMethod3);
+
+            sd4 = sd1 + sd2 + sd3;  //Multi cast delegate
+            sd4.Invoke();
+
+            Console.WriteLine();
+            sd4 = sd1 - sd2 + sd3;  //Multi cast delegate removing sd2 delegate reference
+            sd4.Invoke();
+
+            //another way to do add and remove
+            Console.WriteLine();
+            sd1 = new SampleDelegate(SampleMethod1);
+            sd1 += SampleMethod2;
+            sd1 += SampleMethod3;
+            sd1.Invoke();
+
+            Console.WriteLine();            
+            sd1 -= SampleMethod2;
+            sd1.Invoke();
+
+            //Multi cast delegate to demostrate delegate return only the last added invoked delegate
+            Console.WriteLine();
+            Console.WriteLine("Multi cast delegate to demostrate delegate return only the last added invoked delegate");
+            DelCalculate delcal = new DelCalculate(Add);
+            int result = delcal.Invoke(10, 20);
+            Console.WriteLine(result);
+
+            DelCalculate myDel = new DelCalculate(Add);
+            delcal += Multiply;
+            result = delcal.Invoke(10, 20);
+            Console.WriteLine(result);
         }       
     }
 }
